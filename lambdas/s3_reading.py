@@ -2,15 +2,97 @@ import json
 import boto3
 
 client = boto3.client("s3")
+resource = boto3.resource("dynamodb")
+
+"""
+1. Create DynamoDB table
+2. Get bucket object (JSON file)
+3. Write items to table.
+NOTE: Serialize/Deserialize json < -- > dict
+    loads()
+    JSON to dict
+    x = json.loads(json_var)
+    
+    dumps()
+    dict to JSON
+    x = json.dumps(dict_var)
+"""
 
 
 def lambda_handler(event, context):
+    table_name = "user_data"
+
+    # 1. Create DynamoDB table
+    create_dynamodb_table(resource, table_name)
+
+    # 2. Read JSON data sample from S3 bucket
     response = client.get_object(
         Bucket="bucket_name",
-        Key="json_file_name.json"
+        Key="sample_user_data.json"
     )
 
-    # Convert from streaming data to dynamodb readable
+    # Convert from streaming data to dynamodb readable (Python str)
     json_data = response["Body"].read()
-    data = json_data.decode("UTF-8")
-    return data
+    data_str = json_data.decode("UTF-8")
+
+    # JSON to dict
+    data_dict = json.loads(data_str)
+
+    # 3. Insert one item data into DynamoDB
+    table = write_dynamodb_item(resource, table_name, data_dict)
+    print(table)
+
+    # 4. List tables
+    table_lst = list(resource.tables.all())
+    print(table_lst)
+    return {
+        "statusCode": 200,
+        "message": json.dumps("Things went good")
+    }
+
+
+def create_dynamodb_table(aws_resource, table_name: str):
+    try:
+        table = aws_resource.create_table(
+            TableName=table_name,
+            KeySchema=[
+                {
+                    "AttributeName": "user_name",
+                    "KeyType": "HASH"
+                },
+                {
+                    "AttributeName": "city",
+                    "KeyType": "RANGE"
+                },
+            ],
+            AttributeDefinitions=[
+                {
+                    "AttributeName": "user_name",
+                    "AttributeType": "S"
+                },
+                {
+                    "AttributeName": "city",
+                    "AttributeType": "S"
+                },
+            ],
+            ProvisionedThroughput={
+                "ReadCapacityUnits": 5,
+                "WriteCapacityUnits": 5
+            }
+        )
+
+        # Wait until table exists
+        table.wait_until_exists()
+    except ValueError as e:
+        print(e)
+
+
+def write_dynamodb_item(aws_resource, table_name: str, data: dict):
+    try:
+        table = aws_resource.Table(table_name)
+        table.put_item(
+            Item=data
+        )
+        return table
+    except ValueError as e:
+        return e
