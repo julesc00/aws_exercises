@@ -2,6 +2,7 @@ import json
 import boto3
 
 client = boto3.client("s3")
+db_client = boto3.client("dynamodb")
 resource = boto3.resource("dynamodb")
 
 """
@@ -83,8 +84,9 @@ def create_dynamodb_table(aws_resource, table_name: str):
 
         # Wait until table exists
         table.wait_until_exists()
-    except ValueError as e:
+    except db_client.exceptions.ResourceInUseException as e:
         print(e)
+        pass
 
 
 def write_dynamodb_item(aws_resource, table_name: str, data: dict):
