@@ -5,6 +5,9 @@ client = boto3.client("s3")
 db_client = boto3.client("dynamodb")
 resource = boto3.resource("dynamodb")
 
+
+s3_error = client.exceptions
+
 """
 1. Create DynamoDB table
 2. Get bucket object (JSON file)
@@ -32,7 +35,7 @@ def lambda_handler(event, context):
         Key="sample_user_data.json"
     )
 
-    # Convert from streaming data to dynamodb readable (Python str)
+    # Convert from streaming data to bytes
     json_data = response["Body"].read()
     data_str = json_data.decode("UTF-8")
 
@@ -50,6 +53,17 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "message": json.dumps("Things went good")
     }
+
+
+def get_s3_object(aws_client, bucket_name: str, file_key_name: str):
+    try:
+        response = aws_client.get_object(
+            Bucket=bucket_name,
+            Key=file_key_name
+        )
+    except aws_client.exceptions.ResourceNotExistError as e:
+        print(e)
+        pass
 
 
 def create_dynamodb_table(aws_resource, table_name: str):
