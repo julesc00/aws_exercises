@@ -27,5 +27,5 @@ class TestLambdaMetadata(TestCase):
                 mock_boto3.client.return_value = client
 
                 # Call to lambda_handler in index2.py
-                lambda_response = lambdas.index2.lambda_handler({}, "context")
+                lambda_response = lambdassss.index2.lambda_handler({}, "context")
                 self.assertEqual(lambda_response, expected_response)
