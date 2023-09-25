@@ -27,6 +27,8 @@ class ImageSearch:
 
             pattern = r"_T.jpeg"
             thermal_img_counter = 0
+            no_thermal_img_counter = 0
+
             for idx, item in enumerate(self.f_list):
                 if not item.endswith(".jpeg"):
                     self.f_list.pop(idx)
@@ -37,7 +39,7 @@ class ImageSearch:
 
             # Sort images by date and build a dictionary with them.
             grouped_images = self.group_same_date_images(self.f_list)
-            breakpoint()
+
             for item in self.f_list:
                 if re.search(pattern, item):
                     thermal_img_counter += 1
@@ -46,7 +48,14 @@ class ImageSearch:
                     print(f"No _T match found in '{item}'")
             print(f"{thermal_img_counter} _T matches found")
 
-            return self.f_list
+            for group in grouped_images:
+                if not any(pattern in img for img in group):
+                    no_thermal_img_counter += 1
+
+            return {
+                "thermalImageCount": thermal_img_counter,
+                "objectMissingThermalImageCount": no_thermal_img_counter,
+            }
 
         except Exception as e:
             print(f"An error occurred: {str(e)}")
@@ -54,7 +63,7 @@ class ImageSearch:
     @staticmethod
     def group_same_date_images(img_list: list):
         """
-        This generator groups images with the same date in another list.
+        This method groups images with the same date in another list.
         :param img_list: list of images
         :return: list with grouped images
         """
