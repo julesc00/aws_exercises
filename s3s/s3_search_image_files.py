@@ -9,17 +9,14 @@ class ImageSearch:
 
     f_list = []
 
-    def __int__(self):
-        self.images = []
-
     def search_thermal_images(self, bucket_name, prefix):
         # List objects in the specified S3 bucket with the given prefix
         s3_client = boto3.client("s3")
-
+        unique_dates = set()
         try:
             response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
 
-            # Check if any objects were found
+            # Check if any objects were found and clean the list from non-image files.
             if "Contents" in response:
                 print("Found matching files:")
                 for obj in response["Contents"]:
@@ -33,6 +30,14 @@ class ImageSearch:
             for idx, item in enumerate(self.f_list):
                 if not item.endswith(".jpeg"):
                     self.f_list.pop(idx)
+
+            # Get unique dates from the list of images. This will be used to group images by date.
+            for img in self.f_list:
+                unique_dates.add(img[:-7])
+
+            # Sort images by date and build a dictionary with them.
+            grouped_images = self.group_same_date_images(self.f_list)
+            breakpoint()
             for item in self.f_list:
                 if re.search(pattern, item):
                     thermal_img_counter += 1
@@ -46,9 +51,29 @@ class ImageSearch:
         except Exception as e:
             print(f"An error occurred: {str(e)}")
 
+    @staticmethod
+    def group_same_date_images(img_list: list):
+        """
+        This generator groups images with the same date in another list.
+        :param img_list: list of images
+        :return: list with grouped images
+        """
+        grouped_items = []
+        unique_dates = set()
+
+        for img in img_list:
+            unique_dates.add(img[:-7])
+        for img_name in unique_dates:
+            tmp_list = []
+            for img in img_list:
+                if img_name == img[:-7]:
+                    tmp_list.append(img)
+            grouped_items.append(tmp_list)
+        return grouped_items
+
 
 if __name__ == "__main__":
-    # Replace 'your-bucket-name' and 'your-prefix' with your actual S3 bucket name and prefix
+    # Replace 'your-bucket-name' and 'your-prefix' with the actual S3 bucket name and prefix
     b_name = "briones-thermal-images"
     key_prefix = "COMPLETED 2023"
 
