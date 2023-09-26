@@ -12,7 +12,7 @@ class ImageSearch:
     def search_thermal_images(self, bucket_name, prefix):
         # List objects in the specified S3 bucket with the given prefix
         s3_client = boto3.client("s3")
-        unique_dates = set()
+
         try:
             response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
 
@@ -33,11 +33,7 @@ class ImageSearch:
                 if not item.endswith(".jpeg"):
                     self.f_list.pop(idx)
 
-            # Get unique dates from the list of images. This will be used to group images by date.
-            for img in self.f_list:
-                unique_dates.add(img[:-7])
-
-            # Sort images by date and build a dictionary with them.
+            # Sort images by date and build a list with them.
             grouped_images = self.group_same_date_images(self.f_list)
 
             for item in self.f_list:
@@ -71,13 +67,15 @@ class ImageSearch:
         unique_dates = set()
 
         for img in img_list:
-            unique_dates.add(img[:-7])
+            # If the first DJI_ prefix varies, then skip it in the slicing below.
+            unique_dates.add(img[4:-7])
         for img_name in unique_dates:
             tmp_list = []
             for img in img_list:
-                if img_name == img[:-7]:
+                if img_name == img[4:-7]:
                     tmp_list.append(img)
             grouped_items.append(tmp_list)
+
         return grouped_items
 
 
