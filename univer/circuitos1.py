@@ -64,7 +64,34 @@ def calculate_electric_voltage(I, R1, R2, R3, V2):
     return v_f, P1, P3, V1, V3
 
 
+def calculate_electric_current_v2(V, R1, R2, R3):
+    """
+    Ejercicio 4
+    Calcule el valor de la corriente eléctrica 𝑰𝑭 de la fuente usando la Ley de Ohm.
+    Obtén en forma adicional las potencias eléctricas de cada resistor 𝑷𝟏, 𝑷𝟐 y 𝑷𝟑
+
+    V = 9 Voltaje en voltios
+    R1 = 200 Resistencia R1 en ohmios
+    R2 = 330 Resistencia R2 en ohmios
+    R3 = 220 Resistencia R3 en ohmios
+    """
+
+    # Cálculo de la resistencia total en un circuito serie
+    R_total = R1 + R2 + R3
+
+    # Cálculo de la corriente total usando la ley de Ohm
+    I_F = V / R_total
+
+    # Cálculo de las potencias eléctricas para cada resistor
+    P1 = round(I_F**2 * R1, 5)
+    P2 = round(I_F**2 * R2, 5)
+    P3 = round(I_F**2 * R3, 5)
+
+    return I_F, P1, P2, P3
+
+
 if __name__ == "__main__":
     print(calculate_potencial_difference(0.3, 47, 470, 1000))
     print(calculate_electric_flux(19, 2100, 590, 100))
     print(calculate_electric_voltage(0.1, 300, 0, 150, 10))
+    print(calculate_electric_current_v2(9, 200, 330, 220))
