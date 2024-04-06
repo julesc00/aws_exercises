@@ -78,4 +78,4 @@ def divide_income_30_year_payout(income, divider=3):
 
 
 if __name__ == "__main__":
-    print(gods_blessing(16_300_000_000, 40))
+    print(gods_blessing(21_500_000_000, 40))
