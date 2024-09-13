@@ -4,7 +4,7 @@ from currency_converter import CurrencyConverter
 cc = CurrencyConverter()
 
 
-def gods_blessing(amount, tax_rate):
+def gods_blessing(amount: int, tax_rate:int) -> str:
     discount = (tax_rate / 100) * amount
     result = amount - discount
     amt_usd = cc.convert(amount, "MXN", "USD")
@@ -27,7 +27,7 @@ def discount_charity(income):
     return (10 / 100) * income
 
 
-def divide_income_one_payout(income, divider=3):
+def divide_income_one_payout(income: float, divider=3):
     """
     Divide the income into 3 parts, following the Jewish tradition and giving 10% of the income to charity.
     """
@@ -42,6 +42,7 @@ def divide_income_one_payout(income, divider=3):
     Net income: ${int(income):,}
     Net income in USD: ${int(usd_net_income):,}
     10% Charity: ${charity_disc:,}
+    ==== After Charity ====
     Part in USD: ${int(usd_part):,}
     Live Part: ${part:,}
     Investment Part: ${int(part):,}
@@ -49,7 +50,7 @@ def divide_income_one_payout(income, divider=3):
     """
 
 
-def divide_income_30_year_payout(income, divider=3):
+def divide_income_30_year_payout(income: float, divider=3):
     """
     Divide the income into 30 parts, following the Jewish tradition and giving 10% of the income to charity.
     """
@@ -68,6 +69,7 @@ def divide_income_30_year_payout(income, divider=3):
     Net income in USD: ${int(usd_net_income):,}
     10% Charity: ${charity_disc:,}
     Yearly Charity: ${yearly_charity_disc:,}
+    ==== After Charity ====
     Yearly Part: ${yearly_part:,}
     Yearly Part in USD: ${int(usd_yearly_part):,}
     Part in USD: ${int(usd_part):,}
@@ -78,4 +80,4 @@ def divide_income_30_year_payout(income, divider=3):
 
 
 if __name__ == "__main__":
-    print(gods_blessing(21_500_000_000, 40))
+    print(gods_blessing(15_900_000_000, 40))

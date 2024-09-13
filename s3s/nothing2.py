@@ -1,4 +1,5 @@
 import multiprocessing
+import os
 from multiprocessing import Pool
 from pprint import pprint
 
@@ -16,6 +17,7 @@ files = [
 
 
 def extract_date(img):
+    env = os.getenv("ENV", "dev")
     dgi_idx = img.find("DJI_")
     ext = ["_T.JPG", "_T.jpg", "_T_FLIR.jpg", "_T_FLIR.JPG"]
     for e in ext:

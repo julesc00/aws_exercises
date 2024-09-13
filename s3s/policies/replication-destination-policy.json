@@ -1,0 +1,30 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Object Level Permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::021891590564:role/service-role/s3crr_role_for_briones-test-replication-source-bucket"
+            },
+            "Action": [
+                "s3:ReplicateObject",
+                "s3:ReplicateDelete"
+            ],
+            "Resource": "arn:aws:s3:::briones-test-destination-bucket/*"
+        },
+        {
+            "Sid": "Bucket Level Permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::021891590564:role/service-role/s3crr_role_for_briones-test-replication-source-bucket"
+            },
+            "Action": [
+                "s3:List*",
+                "s3:GetBucketVersioning",
+                "s3:PutBucketVersioning"
+            ],
+            "Resource": "arn:aws:s3:::briones-test-destination-bucket"
+        }
+    ]
+}
