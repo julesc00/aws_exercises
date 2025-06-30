@@ -13,7 +13,6 @@ def is_anagram(text: List[str]) -> List[str]:
     for word1 in text:
         for word2 in to_compare:
             r_w = word2[::-1]
-            breakpoint()
             if word1 == r_w:
                 anagram.append(word1)
     return anagram
