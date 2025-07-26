@@ -11,7 +11,7 @@ def get_total_monthly_income(daily_rate: int = FIXED_DAILY_PAY) -> Decimal:
     hourly_rate = Decimal(daily_rate / 8)
     print(f"""
         Dollar vs Peso: ${CurrencyConverter().convert(1, "USD", "MXN"):,}
-        Costo por Hora en dólares: ${hourly_rate:,}
+        Costo por Hora en dólares, partiendo de 250  / 8: ${hourly_rate:,}
         Total de horas mensual: {total_hours}
         Facturar por: ${total_hours * hourly_rate:,}
         Pay in Mexican Pesos: ${CurrencyConverter().convert(total_hours * hourly_rate, "USD", "MXN"):,}
